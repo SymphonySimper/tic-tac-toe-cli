@@ -34,6 +34,8 @@ impl Logic {
         let line = "-".repeat(13);
         println!("{}", line);
         let mut n = 0;
+        // index value
+        let mut i = 0;
         for c in &self.board {
             if n == 0 {
                 print!("| ")
@@ -41,7 +43,11 @@ impl Logic {
             if n <= 2 && n > 0 {
                 print!(" | ")
             }
-            print!("{}", c);
+            if c == &' ' {
+                print!("{}", i);
+            } else {
+                print!("{}", c);
+            }
             if n == 2 {
                 print!(" |");
                 println!("\n{}", line);
@@ -49,6 +55,7 @@ impl Logic {
             } else {
                 n += 1
             }
+            i += 1;
         }
         println!();
     }
