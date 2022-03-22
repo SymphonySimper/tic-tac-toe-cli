@@ -59,7 +59,9 @@ impl Logic {
             if c == &' ' {
                 print!("{}", i);
             } else {
-                print!("{}", c);
+                // \x1b[1;3m bold italic text
+                // \x1b[0m reset
+                print!("\x1b[1;3m{}\x1b[0m", c);
             }
             if n == 2 {
                 print!(" {}", cb[1]);
