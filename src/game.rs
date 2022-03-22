@@ -22,8 +22,6 @@ impl Game {
             }
 
             if !false_input {
-                // Clear screen
-                println!("\x1Bc");
                 logic.display();
             }
 
@@ -36,12 +34,24 @@ impl Game {
                 false_input = true;
                 continue;
             }
-            if logic.is_done() {
-                println!("Payer {} won!", logic.turn);
-                break;
-            } else {
-                logic.change_turn();
-                self.round += 1;
+            match logic.is_done() {
+                "done" => {
+                    logic.display();
+                    println!("Payer {} won!", logic.turn);
+                    break;
+                }
+                "nah" => {
+                    logic.change_turn();
+                    self.round += 1;
+                }
+
+                "tie" => {
+                    logic.display();
+                    println!("It's a tie.");
+                    break;
+                }
+
+                _ => (),
             }
         }
     }

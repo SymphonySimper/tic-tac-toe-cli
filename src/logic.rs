@@ -24,7 +24,7 @@ impl Logic {
     }
     pub fn get_input(&self) -> Option<usize> {
         let mut n = String::new();
-        println!("It's player {}'s turn: ", self.turn);
+        println!("It's player \x1b[1;3;4m{}\x1b[0m's turn: ", self.turn);
         print!("Enter your choice [0-8]: ");
         stdout().flush().expect("Couldn't flush to stdout");
         stdin().read_line(&mut n).expect("Could't read from stdin");
@@ -45,10 +45,13 @@ impl Logic {
         let cb = ["─", "│"];
         let b = [["┌", "┬", "┐"], ["├", "┼", "┤"], ["└", "┴", "┘"]];
 
-        print_border(&b[0], &cb);
         let mut n = 0;
         // index value
         let mut i = 0;
+
+        // clear screen
+        println!("\x1Bc");
+        print_border(&b[0], &cb);
         for c in &self.board {
             if n == 0 {
                 print!("{} ", cb[1]);
@@ -61,7 +64,7 @@ impl Logic {
             } else {
                 // \x1b[1;3m bold italic text
                 // \x1b[0m reset
-                print!("\x1b[1;3m{}\x1b[0m", c);
+                print!("\x1b[1;3;4m{}\x1b[0m", c);
             }
             if n == 2 {
                 print!(" {}", cb[1]);
@@ -95,7 +98,7 @@ impl Logic {
         }
     }
 
-    pub fn is_done(&self) -> bool {
+    pub fn is_done(&self) -> &str {
         let win_combi = vec![
             // horizontal
             (0, 1, 2),
@@ -113,13 +116,34 @@ impl Logic {
             (2, 4, 6),
         ];
 
-        let mut win = false;
+        let mut win = "nah";
         for &(x, y, z) in win_combi.iter() {
             if self.board[x] == self.board[y]
                 && self.board[y] == self.board[z]
                 && self.board[z] == self.turn
             {
-                win = true
+                win = "done"
+            }
+            if win != "done" {
+                for val in ['X', 'O'] {
+                    if (self.board[x] == val
+                        && self.board[y] == val
+                        && self.board[z] != val
+                        && self.board[z] != ' ')
+                        || (self.board[x] == val
+                            && self.board[y] != val
+                            && self.board[y] != ' '
+                            && self.board[z] == val)
+                        || (self.board[x] != val
+                            && self.board[x] != ' '
+                            && self.board[y] == val
+                            && self.board[z] == val)
+                    {
+                        win = "tie";
+                    } else {
+                        win = "nah";
+                    }
+                }
             }
         }
 
