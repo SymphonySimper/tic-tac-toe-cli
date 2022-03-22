@@ -1,8 +1,9 @@
-use std::io::{stdin, stdout, Write};
+use crate::terminal;
 
 pub struct Logic {
     pub board: Vec<char>,
     pub turn: char,
+    wc: Vec<usize>,
 }
 
 fn print_border(a: &[&str], cb: &[&str]) {
@@ -20,14 +21,10 @@ impl Logic {
         Self {
             board: vec![' '; 9],
             turn: 'X',
+            wc: vec![0; 3],
         }
     }
-    pub fn get_input(&self) -> Option<usize> {
-        let mut n = String::new();
-        println!("It's player \x1b[1;3;4m{}\x1b[0m's turn: ", self.turn);
-        print!("Enter your choice [0-8]: ");
-        stdout().flush().expect("Couldn't flush to stdout");
-        stdin().read_line(&mut n).expect("Could't read from stdin");
+    pub fn get_input(&self, n: &String) -> Option<usize> {
         let n = n.trim().parse::<usize>();
         if let Ok(i) = n {
             if i > 8 {
@@ -47,10 +44,8 @@ impl Logic {
 
         let mut n = 0;
         // index value
-        let mut i = 0;
+        let mut i: usize = 0;
 
-        // clear screen
-        println!("\x1Bc");
         print_border(&b[0], &cb);
         for c in &self.board {
             if n == 0 {
@@ -59,12 +54,18 @@ impl Logic {
             if n <= 2 && n > 0 {
                 print!(" {} ", cb[1]);
             }
-            if c == &' ' {
+            if c == &' ' && self.wc == [0, 0, 0] {
                 print!("{}", i);
             } else {
-                // \x1b[1;3m bold italic text
-                // \x1b[0m reset
-                print!("\x1b[1;3;4m{}\x1b[0m", c);
+                if self.wc != [0, 0, 0] {
+                    if self.wc[0] == i || self.wc[1] == i || self.wc[2] == i {
+                        print!("{}", terminal::turn(&c));
+                    } else {
+                        print!("{}", c);
+                    }
+                } else {
+                    print!("{}", terminal::turn(&c));
+                }
             }
             if n == 2 {
                 print!(" {}", cb[1]);
@@ -84,9 +85,12 @@ impl Logic {
         println!();
     }
 
-    pub fn update(&mut self, n: usize) {
+    pub fn update(&mut self, n: usize) -> bool {
         if self.board[n] == ' ' {
             self.board[n] = self.turn;
+            true
+        } else {
+            false
         }
     }
 
@@ -98,7 +102,7 @@ impl Logic {
         }
     }
 
-    pub fn is_done(&self) -> &str {
+    pub fn is_done(&mut self) -> &str {
         let win_combi = vec![
             // horizontal
             (0, 1, 2),
@@ -122,6 +126,7 @@ impl Logic {
                 && self.board[y] == self.board[z]
                 && self.board[z] == self.turn
             {
+                self.wc = vec![x, y, z];
                 win = "done"
             }
             if win != "done" {

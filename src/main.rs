@@ -1,8 +1,8 @@
 mod logic;
 mod game;
+mod terminal;
 pub use logic::Logic;
-use game::Game;
 
 fn main() {
-    Game::new().run()
+    game::run()
 }
