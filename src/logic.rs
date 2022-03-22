@@ -5,6 +5,16 @@ pub struct Logic {
     pub turn: char,
 }
 
+fn print_border(a: &[&str], cb: &[&str]) {
+    println!(
+        "{}{}{}{}",
+        a[0],
+        (cb[0].repeat(3) + a[1]).repeat(2),
+        cb[0].repeat(3),
+        a[2]
+    );
+}
+
 impl Logic {
     pub fn new() -> Self {
         Self {
@@ -31,17 +41,20 @@ impl Logic {
     }
 
     pub fn display(&self) {
-        let line = "-".repeat(13);
-        println!("{}", line);
+        let mut count = 0;
+        let cb = ["─", "│"];
+        let b = [["┌", "┬", "┐"], ["├", "┼", "┤"], ["└", "┴", "┘"]];
+
+        print_border(&b[0], &cb);
         let mut n = 0;
         // index value
         let mut i = 0;
         for c in &self.board {
             if n == 0 {
-                print!("| ")
+                print!("{} ", cb[1]);
             }
             if n <= 2 && n > 0 {
-                print!(" | ")
+                print!(" {} ", cb[1]);
             }
             if c == &' ' {
                 print!("{}", i);
@@ -49,9 +62,15 @@ impl Logic {
                 print!("{}", c);
             }
             if n == 2 {
-                print!(" |");
-                println!("\n{}", line);
+                print!(" {}", cb[1]);
+                println!();
+                if count == 0 || count == 1 {
+                    print_border(&b[1], &cb);
+                } else {
+                    print_border(&b[2], &cb);
+                }
                 n = 0;
+                count += 1;
             } else {
                 n += 1
             }
