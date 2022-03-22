@@ -7,13 +7,14 @@ pub struct Logic {
 }
 
 fn print_border(a: &[&str], cb: &[&str]) {
-    println!(
+    let t = format!(
         "{}{}{}{}",
         a[0],
         (cb[0].repeat(3) + a[1]).repeat(2),
         cb[0].repeat(3),
-        a[2]
+        a[2],
     );
+    println!("{}", terminal::border(&t));
 }
 
 impl Logic {
@@ -49,26 +50,26 @@ impl Logic {
         print_border(&b[0], &cb);
         for c in &self.board {
             if n == 0 {
-                print!("{} ", cb[1]);
+                print!("{} ", terminal::border(cb[1]));
             }
             if n <= 2 && n > 0 {
-                print!(" {} ", cb[1]);
+                print!(" {} ", terminal::border(cb[1]));
             }
             if c == &' ' && self.wc == [0, 0, 0] {
-                print!("{}", i);
+                print!("{}", terminal::num(&i));
             } else {
                 if self.wc != [0, 0, 0] {
                     if self.wc[0] == i || self.wc[1] == i || self.wc[2] == i {
                         print!("{}", terminal::turn(&c));
                     } else {
-                        print!("{}", c);
+                        print!("{}", terminal::nimp(&c));
                     }
                 } else {
                     print!("{}", terminal::turn(&c));
                 }
             }
             if n == 2 {
-                print!(" {}", cb[1]);
+                print!(" {}", terminal::border(cb[1]));
                 println!();
                 if count == 0 || count == 1 {
                     print_border(&b[1], &cb);
