@@ -13,6 +13,7 @@ impl Game {
     }
 
     pub fn run(&mut self) {
+        let mut false_input = false;
         let ref mut logic = self.logic;
         loop {
             if self.round > 9 {
@@ -20,15 +21,19 @@ impl Game {
                 break;
             }
 
-            // Clear screen
-            println!("\x1Bc");
+            if !false_input {
+                // Clear screen
+                println!("\x1Bc");
+                logic.display();
+            }
 
-            logic.display();
             let m = logic.get_input();
             if let Some(i) = m {
+                false_input = false;
                 logic.update(i);
             } else {
                 println!("Enter a valid choice![0-8]");
+                false_input = true;
                 continue;
             }
             if logic.is_done() {
