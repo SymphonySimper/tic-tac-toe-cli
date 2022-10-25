@@ -9,6 +9,6 @@ edition = "2021"
 strip = true  # Automatically strip symbols from the binary.
 opt-level = "z"
 lto = true
-paic = "abort"
+panic = "abort"
 
 [dependencies]
